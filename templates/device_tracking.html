@@ -1,0 +1,690 @@
+{% extends 'sidebar.html' %}
+{% block content %}
+ 
+ 
+<style>
+    .left-aligned-label {
+        text-align: left !important;
+    }
+ 
+    /* Side panel style */
+    .sidepanel {
+        width: 0;
+        height: 100%;
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        right: 0;
+        background-color: black;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+    }
+ 
+    .sidepanel-content {
+        padding: 20px;
+        color: white;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+ 
+    .progress-container {
+        z-index: 1;
+        /* Ensure this is lower than the sidebar */
+        /* other styles */
+    }
+ 
+    .comment-card {
+    background-color: #000000;
+    padding: 15px;
+    width: 380px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 40px;
+}
+ 
+.card-item {
+    margin-bottom: 12px;
+    color: whitesmoke;
+    align-items: start;
+}
+ 
+.card-footer {
+    margin-top: 12px;
+    font-size: 13px;
+}
+ 
+.card-item strong,
+.card-item span {
+    font-size: 14px;
+}
+ 
+.card-item a {
+    font-size: 13px;
+    color: #FFFFFF;
+}
+ 
+.card-item a:hover {
+    text-decoration: underline;
+}
+.comment-meta .card-item {
+    font-size: 14px;
+    color: whitesmoke;
+    margin-bottom: 8px;
+    margin-left: 35px;
+}
+.comment-meta .strong{
+    font-size: 14px;
+    font-weight: bolder;
+}
+ 
+.mb-2 {
+    margin-bottom: 8px !important;
+}
+.bi {
+    font-size: 2em; /* Increase icon size */
+    margin-right: 8px;
+}
+ 
+ 
+    .text-bar {
+        display: flex;
+        /* Use flexbox to layout children horizontally */
+        align-items: center;
+        justify-content: space-between;
+        /* Center items vertically */
+        background-color: #f1f1f1;
+        padding: 10px;
+        border-radius: 50px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        background-color: #f1f1f1;
+    }
+ 
+    .text-bar * {
+        border: none;
+        box-sizing: border-box;
+    }
+ 
+    .text-bar form {
+        display: flex;
+        width: 100%;
+        border-radius: 10px;
+        /* Form should take full width of its parent */
+    }
+ 
+    .text-bar input[type="text"],
+    .text-bar .file-upload-wrapper,
+    .text-bar .percentage-select,
+    .text-bar button {
+        margin-right: 10px;
+ 
+        /* Add some spacing between the elements */
+    }
+ 
+    .text-bar input[type="text"] {
+        flex-grow: 1;
+        /* Allows the input to grow and fill available space */
+        margin-right: 10px;
+        /* Adds spacing to the right of the input */
+        border-radius: 15px;
+    }
+ 
+    .file-upload-wrapper,
+    .percentage-select,
+    .text-bar button {
+        margin-right: 10px;
+        /* Adds spacing to the right of each element */
+    }
+ 
+    /* Adjustments for the select element to align properly */
+    .percentage-select {
+        display: flex;
+        align-items: center;
+    }
+ 
+    /* Additional styling for the file upload label to align with other elements */
+    .file-upload-wrapper label {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+ 
+    }
+ 
+ 
+    .percentage-select select {
+        border: none;
+        background: none;
+        color: #006fe6;
+        padding: 5px;
+        font-size: 14px;
+        max-width: 60px;
+        /* Adjust based on your needs */
+    }
+ 
+    .percentage-select select:focus {
+        outline: none;
+    }
+ 
+ 
+    .file-upload-wrapper {
+        display: flex;
+        align-items: center;
+        color: #006fe6;
+    }
+ 
+    .file-upload-wrapper input[type="file"] {
+        display: none;
+    }
+ 
+    .percentage-select select {
+        border: none;
+        background: none;
+        color: #007bff;
+        padding: 5px;
+    }
+ 
+    .percentage-select select:focus {
+        outline: none;
+    }
+ 
+    .info-card {
+        display: none;
+        /* Hidden by default */
+        position: absolute;
+        bottom: 120%;
+        /* Position above the progress step */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        z-index: 1000;
+        width: 200px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+    }
+ 
+    .progress-step.active .info-card {
+        display: block;
+    }
+ 
+    .progress-container {
+        display: flex;
+        align-items: left;
+        justify-content: left;
+        position: relative;
+        width: 100%;
+        font-size: 12px;
+        z-index: 2;
+    }
+ 
+    .progress-line {
+        position: absolute;
+        top: 30%;
+        left: 10%;
+        height: 3px;
+        width: 80%;
+        background: #e0e0e0;
+        z-index: -1;
+    }
+   
+
+    .progress {
+        height: 100%;
+        background-color: #00c853;
+    }
+
+    .progress-dot {
+        position: absolute;
+        top: -5px;
+        width: 14px;
+        height: 14px;
+        background-color: #00c853;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 12px;
+    }
+
+    .tooltip {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        display: none;
+    }
+
+    .progress-dot:hover .tooltip {
+        display: block;
+    }
+    .progress-line .progress {
+        background: #4caf50;
+        height: 50%;
+        transition: width 0.4s ease;
+    }
+ 
+    .progress-step {
+        position: relative;
+ 
+        width: 20%;
+        text-align: center;
+ 
+    }
+ 
+    .progress-step span {
+        font-size: 20px;
+        display: block;
+    }
+ 
+    .step-active {
+        color: #4caf50;
+    }
+ 
+    .step-inactive {
+        color: silver;
+    }
+ 
+    .hidden-row {
+        display: none;
+    }
+ 
+    a {
+        text-decoration: none;
+    }
+ 
+    a:hover {
+        text-decoration: none;
+    }
+ 
+    .navtop {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 10px;
+        background-color: black;
+        /* Matches the side panel background */
+        border-bottom: 1px solid #444;
+        /* Optional: adds a bottom border */
+    }
+ 
+    .navtop h6 {
+        margin-left: 20px;
+    }
+ 
+    .closebtn {
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+        padding-right: 10px;
+    }
+  
+
+</style>
+<script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+ 
+<script>
+    $(document).ready(function() {
+        $('#assigneeSelect').select2({
+            placeholder: 'Select Assignees',
+            allowClear: true
+        });
+    });
+ 
+    $(document).ready(function() {
+    $('#assigneeSelect').chosen({
+        placeholder_text_multiple: 'Select Assignees',
+        no_results_text: 'No results matched'
+    });
+});
+    </script>
+     
+</head>
+ 
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h5 class="mb-0 text-black">DRL Tracking Dashboard</h5>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#membershipModal">
+            Create Project
+        </button>
+    </div>
+ 
+    <div class="modal fade" id="membershipModal" tabindex="-1" role="dialog" aria-labelledby="membershipModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="membershipModalLabel">Add Project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/addtracking" method="POST" enctype="multipart/form-data" id="membershipForm">
+                        <!-- Form fields -->
+                        <div class="form-group">
+                            <label>Enter Project ID</label>
+                            <input type="text" name="pid" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Enter Project Name</label>
+                            <input type="text" name="pname" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Enter Project Number</label>
+                            <input type="text" name="pono" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Select Assignee Name</label>
+                            <select id="assigneeSelect" name="Assigned_Engineer[]" class="form-control" multiple="multiple">
+                                {% for uname in user %}
+                                    <option value="{{ uname[0] }}">{{ uname[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                       
+                       
+                        <div class="form-group">
+                            <label>Enter Project Location</label>
+                            <input type="text" name="location" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Upload Purchased Order</label>
+                            <input type="file" name="Po_Upload" class="form-control">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" form="membershipForm" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+               
+               
+            </div>
+        </div>
+    </div>
+ 
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Device Tracking
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-light">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Project ID</th>
+                        <th>Project Name</th>
+                        <th>PO Number</th>
+                        <th>Assigned Engineer</th>
+                        <th>Location</th>
+                        <th>PO Upload</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                    {% set current_percentage = project_start_dict.get(row[0], 0) %}
+                    {% set updated_percentage = 50 + (current_percentage * 0.50) %}
+                    
+                    <tr class="main-row">
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                        <td>{{ row[2] }}</td>
+                        <td>{{ row[3] }}</td>
+                        <td>{{ row[4] }}</td>
+                        <td><a href="{{ row[5] }}" target="_blank">View/Download PDF</a></td>
+                    </tr>
+                    <tr class="hidden-row">
+                        <td colspan="12">
+                            <div class="row progress-container">
+                                <div class="progress-line">
+                                    <div class="progress" style="width: {{ updated_percentage }}%;"></div>
+                                </div>
+                                <!-- Dynamically adjust step classes based on progress -->
+                                <div class="col-lg-1 progress-step">
+                                    <span class="{% if row[6] == 'Delivery_Initiated' %}step-active{% else %}step-inactive{% endif %}">
+                                        &#9989;
+                                    </span>
+                                    Delivery Initiated
+                                    <div class="info-card">
+                                        <strong>{{ row[1] }}</strong><br>
+                                        Purchased Order Number: {{ row[2] }}<br>
+                                        Assigned Name: {{ row[3] }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 progress-step">
+                                    <span class="{% if row[6] == 'Delivered' %}step-active{% else %}step-inactive{% endif %}">&#9989;</span>
+                                    Delivered
+                                    <div class="info-card">
+                                        {% if row[7] == "NODATA" %}
+                                        <form action="{{ url_for('upload_poc_signed') }}" method="POST" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                <label>Upload File</label>
+                                                <input type="file" class="form-control" id="fileInput" name="file">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Project Details</label>
+                                                <textarea class="form-control" id="projectDetails" name="project_details" rows="3" placeholder="Enter project details"></textarea>
+                                            </div>
+                                            <input type="hidden" name="id" value="{{ row[0] }}">
+                                            <input type="submit" class="btn btn-warning">
+                                        </form>
+                                        {% else %}
+                                        View PO Signed PDF <a href="{{ row[7] }}" target="_blank">Click here</a> <br>
+                                        <strong>Project Details</strong><br>
+                                        {{ row[8] }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 progress-step">
+                                    <span class="{% if row[6] == 'project_start' %}step-active{% else %}step-inactive{% endif %}" onclick="openSidePanel({{ loop.index }}, '{{ row[0] }}')">
+                                        &#9989;
+                                    </span>
+                                    Project Start
+                                    <div id="mySidepanel{{ loop.index }}" class="sidepanel">
+                                        <div class="navtop d-flex justify-content-between align-items-center">
+                                            <h6 style="color: #e0e0e0; margin: 0;">Project Comments</h6>
+                                            <a href="javascript:void(0)" class="closebtn" onclick="closeSidePanel({{ loop.index }})">&times;</a>
+                                        </div>
+                                        <div class="sidepanel-content">
+                                            <div id="comment-list-{{ loop.index }}" class="comment-list">
+                                                <!-- Existing comments will be dynamically inserted here -->
+                                                <div id="comments-container-{{ loop.index }}"></div>
+                                            </div>
+                                            <!-- Input fields to add new comment, file, and percentage -->
+                                            <div class="text-bar">
+                                                <form action="/add_comment" method="POST" enctype="multipart/form-data">
+                                                    <div class="form-group">
+                                                        <input type="hidden" name="did" value="{{ row[0] }}">
+                                                    </div>
+                                                    <input type="text" placeholder="Type a message..." name="comment">
+                                                    <div class="file-upload-wrapper">
+                                                        <label for="file-upload-{{ loop.index }}">
+                                                            <i class="fa fa-paperclip"></i>
+                                                        </label>
+                                                        <input id="file-upload-{{ loop.index }}" type="file" name="comment_file">
+                                                    </div>
+                                                    <div class="percentage-select">
+                                                        <select name="completion_percentage" onchange="updateProgressBar({{ loop.index }}, this.value)">
+                                                            <option value="0%">0%</option>
+                                                            <option value="10%">10%</option>
+                                                            <option value="20%">20%</option>
+                                                            <option value="30%">30%</option>
+                                                            <option value="40%">40%</option>
+                                                            <option value="50%">50%</option>
+                                                            <option value="60%">60%</option>
+                                                            <option value="70%">70%</option>
+                                                            <option value="80%">80%</option>
+                                                            <option value="90%">90%</option>
+                                                            <option value="100%">100%</option>
+                                                        </select>
+                                                    </div>
+                                                    <button type="submit"><i class="fa fa-paper-plane"></i></button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Progress Bar -->
+                                    <div class="progress-bar-container">
+                                        <div id="progress-bar-{{ loop.index }}" class="progress-bar" style="width: {{ row[7] }};"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-3 progress-step ml-auto">
+                                    <span class="{% if row[6] == 'completed' %}step-active{% else %}step-inactive{% endif %}">&#9989;</span>
+                                    Completed
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+</div>
+ 
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Toggle the main row visibility
+        $('.main-row').on('click', function () {
+            $(this).next('.hidden-row').toggle();
+        });
+ 
+        // Toggle the info card on click
+        $('.progress-step').on('click', function (event) {
+            event.stopPropagation(); // Prevent this event from triggering the document click handler
+            $('.progress-step').removeClass('active');
+            if ($(this).find('.info-card').is(':hidden')) {
+                $(this).addClass('active');
+            }
+        });
+ 
+        // Handle document clicks to close info cards and side panels when clicking outside
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('.progress-step, .sidepanel').length) {
+                $('.progress-step').removeClass('active');
+                $('.sidepanel').css('width', '0');
+            }
+        });
+ 
+        // Prevent the side panel from closing when clicking inside it
+        $('.sidepanel').on('click', function (event) {
+            event.stopPropagation(); // Prevent this event from triggering the document click handler
+        });
+ 
+        // Automatically open the side panel if a 'did' is passed in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const did = urlParams.get('did');
+        if (did) {
+            const index = $('.progress-step[data-did="' + did + '"]').index('.progress-step') + 1;
+            openSidePanel(index, did);
+        }
+    });
+ 
+    function handleStepClick(index, did) {
+        // Prevent default action (if any) on click
+        event.preventDefault();
+ 
+        // Open the side panel
+        openSidePanel(index, did);
+    }
+    function updateProgressBar(index, percentage) {
+    document.getElementById('progress-bar-' + index).style.width = percentage;
+}
+
+    function openSidePanel(index, did) {
+        // Close any other open side panels
+        $('.sidepanel').css('width', '0');
+ 
+        // Open the selected side panel
+        const sidePanel = document.getElementById("mySidepanel" + index);
+        sidePanel.style.width = "500px";
+ 
+        // Check if did is defined and valid
+        if (!did || did.trim() === '') {
+            console.error('Project ID (did) is undefined or empty');
+            return;
+        }
+ 
+        // Fetch comments related to the selected project
+        fetch(`/get_comments/${did}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(comments => {
+                // Clear existing comments
+                console.log('Fetched comments:', comments);
+                const sidePanelContent = sidePanel.querySelector('.sidepanel-content');
+                const commentsContainer = sidePanelContent.querySelector(`#comments-container-${index}`);
+                commentsContainer.innerHTML = '';
+ 
+                // Render the fetched comments
+                comments.forEach((comment, idx) => {
+    const commentCard = `
+        <div class="comment-card">
+            <div class="card-item d-flex align-items-center mb-2">
+                <i class="bi bi-person"></i>
+                <strong class="ms-2">${comment.assigned_engineer}</strong>
+            </div>
+            <div class="card-item comment-meta ">
+                <div class="card-item  d-flex align-items-center">
+                    <strong class="ms-2">${comment.comment}</strong>
+                </div>
+                <div class="card-item d-flex align-items-center">
+    <strong class="ms-2" style="color: blue;">
+        ${comment.file ? `<a href="/static/${comment.file}" target="_blank" style="color: blue;">Attachment</a>` : 'No file uploaded.'}
+    </strong>
+</div>
+                <div class="card-footer text-end">
+                     <i class="bi bi-clock" style="margin-right: 4px; font-size: 12px;"></i>
+ 
+                    ${new Date(comment.created_at).toLocaleString()}
+                </div>
+            </div>
+ 
+        </div>`;
+   
+    console.log('Generated comment card:', commentCard);
+    commentsContainer.innerHTML += commentCard;
+});
+ 
+ 
+            })
+            .catch(error => console.error('Error fetching comments:', error));
+    }
+ 
+    function closeSidePanel(index, event) {
+        // Close the selected side panel
+        document.getElementById("mySidepanel" + index).style.width = "0";
+ 
+        // Stop event propagation to prevent triggering document click handler
+        event.stopPropagation();
+    }
+    
+    function showPercentage(percentage) {
+        alert("Current progress: " + percentage + "%");
+    }
+</script>
+
+ 
+{% endblock %}

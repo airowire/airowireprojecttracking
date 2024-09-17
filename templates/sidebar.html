@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+   <link rel="icon" type="image/x-icon" href="https://i.ytimg.com/vi/h_Z01mSNY_o/maxresdefault.jpg">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Bootstrap CSS -->
+    <title> AMT Dashboard</title>
+
+    <!-- Custom fonts for this template-->
+    
+<!-- Custom fonts for this template-->
+<link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/sb-admin-2.css') }}" rel="stylesheet">
+
+
+<link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+
+<link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet" />
+
+<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+<style>
+     table th, table td {
+    text-align: left;
+}
+ 
+th {
+    color: black;
+}
+ 
+.pagination {
+    margin: 0;
+    padding: 0;
+    list-style-type: none; /* Remove default list styling */
+}
+
+.pagination li {
+    border: 1px solid black;
+    border-radius: 3px; /* Slightly rounded corners, or use 0px for sharp corners */
+    padding: 2px 8px; /* Adjust padding to make the rectangles larger */
+    margin: 5px;
+    display: inline-block; /* Aligns the list items horizontally */
+    text-align: center; /* Center-aligns text within each rectangle */
+}
+
+.pagination li:hover {
+    cursor: pointer;
+    background-color: #f0f0f0; /* Optional: Change background on hover */
+}
+
+.pagination .active {
+    background-color: #d0d0d0; 
+    font-weight: bold;
+}
+
+ 
+.header_wrap {
+    padding: 30px 0;
+}
+ 
+.num_rows {
+    width: 20%;
+    float: left;
+}
+ 
+.tb_search {
+    width: 20%;
+    float: right;
+}
+ 
+.pagination-container {
+    width: 70%;
+    float: left;
+}
+ 
+.rows_count {
+    width: 20%;
+    float: right;
+    text-align: right;
+    color: #999;
+}
+ 
+
+@media (max-width: 320px) {
+    .num_rows, .tb_search, .pagination-container, .rows_count {
+        float: none;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .pagination li {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+ 
+/* For mobile phones */
+@media (max-width: 480px) {
+    .header_wrap {
+        padding: 20px 0;
+    }
+    .pagination li {
+        border-radius: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    .num_rows, .tb_search, .pagination-container, .rows_count {
+        float: none;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+}
+</style>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="wrapper">
+        <ul class="navbar-nav  sidebar sidebar-default  accordion" id="accordionSidebar" style="background-color: #697184;color: white;font-family: Copperplate, Copperplate Gothic Light, fantasy;">
+
+		 <li class="nav-item ">
+                <a class="nav-link" href="/device_tracking">
+			<p style="font-size: 18px;color: orange;font-weight: bold"> airowire <span  style="font-size: 18px;color: white;">networks</span> </p>
+            </li>
+
+           
+                
+           
+            <hr class="sidebar-divider my-0">
+            
+        
+            
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                    aria-expanded="true" aria-controls="collapseUtilities">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Admin</span>
+                </a>
+                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="payout" style="font-size: 13px">User Managment</a>
+                        <a class="collapse-item" href="payout" style="font-size: 13px">Project Management</a>                    
+
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item "></li>
+                <a class="nav-link" href="/device_tracking">
+                    <i style="font-size: 12px;margin-left: 20px" class="fas fa-fw fa-tachometer-alt"></i>
+                    <span style="font-size: 13px">Device Tracking</span></a>
+            </li>
+        
+        </ul>
+        
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column" >
+
+            <!-- Main Content -->
+            <div id="content" style="background: #F2F1EF">
+
+                <!-- Topbar -->
+		<div style="margin-top: 10px">
+		<div class="container-fluid">                 
+<nav class="navbar navbar-expand  topbar mb-4 static-top shadow" style="background-color: #697184;border-radius: 6px">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars text-white"></i>
+                    </button>
+
+                    <!-- Topbar Search -->
+
+		    <h6 class="text-fluid text-white" style="margin-left: 50px;margin-top:10px;font-family: Copperplate, Copperplate Gothic Light, fantasy"> Welcome to Airowire Management Portal </h6>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small text-white" style="font-family: Copperplate, Copperplate Gothic Light, fantasy"> {{session.uname}}</span>
+                                <img class="img-profile rounded-circle"
+                                    src="{{ url_for('static', filename='img/undraw_profile.svg') }}">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="/profile">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+		</div>
+		</div>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                {% block content %}{% endblock %}
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+   
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo/chart-area-demo.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo/chart-pie-demo.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+       <script src="{{ url_for('static', filename='js/datatables-simple-demo.js') }}"></script>
+        <script>
+        $(document).ready(function() {
+            var currentPage = 1; // To keep track of the current page
+            var rangeSize = 4; // Number of pagination links to show at a time
+        $('#search_input_all').on('keyup', FilterkeyWord_all_table);
+
+            getPagination('#table-id');
+            $('#maxRows').trigger('change');
+        
+            function getPagination(table) {
+                $('#maxRows').on('change', function() {
+                    $('.pagination').html(''); // Reset pagination div
+                    var trnum = 0; // Reset tr counter
+                    var maxRows = parseInt($(this).val()); // Get Max Rows from select option
+                    var totalRows = $(table + ' tbody tr').length; // Numbers of rows
+        
+                    $(table + ' tr:gt(0)').each(function() { // Each TR in table and not the header
+                        trnum++; // Start Counter
+                        if (trnum > maxRows) {
+                            $(this).hide(); // Fade it out
+                        } else {
+                            $(this).show(); // Fade in if within range
+                        }
+                    });
+        
+                    if (totalRows > maxRows) {
+                        var pagenum = Math.ceil(totalRows / maxRows); // Total number of pages
+                        updatePagination(pagenum);
+                    }
+        
+                    // Show initial page content
+                    $('.pagination li[data-page="1"]').addClass('active');
+                    showig_rows_count(maxRows, 1, totalRows);
+        
+                    $('.pagination').on('click', 'li', function(e) {
+                        e.preventDefault();
+                        var pageNum = $(this).attr('data-page');
+        
+                        if (pageNum === 'prev') {
+                            if (currentPage > 1) {
+                                currentPage--;
+                                updatePagination(pagenum);
+                            }
+                        } else if (pageNum === 'next') {
+                            if (currentPage < pagenum) {
+                                currentPage++;
+                                updatePagination(pagenum);
+                            }
+                        } else {
+                            pageNum = parseInt(pageNum);
+                            if (pageNum >= 1 && pageNum <= pagenum) {
+                                currentPage = pageNum;
+                                var trIndex = 0; // Reset tr counter
+                                $('.pagination li').removeClass('active'); // Remove active class from all li
+                                $('.pagination li[data-page="' + pageNum + '"]').addClass('active'); // Add active class to the clicked
+        
+                                showig_rows_count(maxRows, pageNum, totalRows);
+        
+                                $(table + ' tr:gt(0)').each(function() { // Each tr in table not the header
+                                    trIndex++; // tr index counter
+                                    if (trIndex > (maxRows * pageNum) || trIndex <= ((maxRows * pageNum) - maxRows)) {
+                                        $(this).hide();
+                                    } else {
+                                        $(this).show(); // Fade in
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+            }
+        
+            function updatePagination(pagenum) {
+                $('.pagination').html('');
+                var startPage = Math.max(1, currentPage - Math.floor(rangeSize / 2));
+                var endPage = Math.min(pagenum, startPage + rangeSize - 1);
+        
+                if (startPage > 1) {
+                    $('.pagination').append('<li class="arrow" data-page="prev"><span>&laquo;</span></li>'); // Previous Arrow
+                }
+        
+                for (var i = startPage; i <= endPage; i++) {
+                    $('.pagination').append('<li data-page="' + i + '"><span>' + i + '</span></li>');
+                }
+        
+                if (endPage < pagenum) {
+                    $('.pagination').append('<li class="arrow" data-page="next"><span>&raquo;</span></li>'); // Next Arrow
+                }
+        
+                $('.pagination li[data-page="' + currentPage + '"]').addClass('active'); // Set initial active page
+            }
+        
+            // SHOWING ROWS NUMBER OUT OF TOTAL DEFAULT
+            function showig_rows_count(maxRows, pageNum, totalRows) {
+                var end_index = maxRows * pageNum;
+                var start_index = ((maxRows * pageNum) - maxRows) + parseFloat(1);
+                var string = 'Showing ' + start_index + ' to ' + end_index + ' of ' + totalRows + ' entries';
+                $('.rows_count').html(string);
+            }
+        
+            // All Table search script
+            function FilterkeyWord_all_table() {
+                var count = $('.table').children('tbody').children('tr:first-child').children('td').length;
+                var input = document.getElementById("search_input_all");
+                var input_value = input.value;
+                var filter = input_value.toLowerCase();
+                if (input_value !== '') {
+                    var table = document.getElementById("table-id");
+                    var tr = table.getElementsByTagName("tr");
+        
+                    for (var i = 1; i < tr.length; i++) {
+                        var flag = 0;
+        
+                        for (var j = 0; j < count; j++) {
+                            var td = tr[i].getElementsByTagName("td")[j];
+                            if (td) {
+                                if (td.innerHTML.toLowerCase().indexOf(filter) > -1) {
+                                    flag = 1;
+                                }
+                            }
+                        }
+                        if (flag === 1) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                } else {
+                    $('#maxRows').trigger('change'); // Reset table
+                }
+            }
+        });
+        </script>
+</body>
+
+</html>
